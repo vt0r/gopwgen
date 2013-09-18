@@ -1,7 +1,7 @@
 // Sal's Random Password Generator
 // --------------------------------
 // My very first Go application.
-// Usage is printed by running 'salpwgen h'
+// Usage is printed by running 'gopwgen h'
 
 package main
 
@@ -18,7 +18,7 @@ import (
 func usage() {
     fmt.Println("Sal's Random Password Generator")
     fmt.Println("-------------------------------")
-    fmt.Println("Usage: salpwgen <OPTION> [length] [number] (length and number optional)\n")
+    fmt.Println("Usage: gopwgen <OPTION> [length] [number] (length and number optional)\n")
     fmt.Println("OPTIONS (MUST SPECIFY ONE!):")
     fmt.Println("s | symbols      Alphanumeric + symbols (NOT FOR MYSQL!)")
     fmt.Println("a | alpha        Alphanumeric only")

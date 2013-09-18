@@ -6,7 +6,7 @@ A simple password generator written in Go
 Usage
 -----
 ```
-Usage: salpwgen <OPTION> [length] [number] (length and number optional)
+Usage: gopwgen <OPTION> [length] [number] (length and number optional)
 
 OPTIONS (MUST SPECIFY ONE!)  
 s | symbols      Alphanumeric + symbols (NOT FOR MYSQL!)  
