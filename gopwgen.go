@@ -2,6 +2,12 @@
 // --------------------------------
 // My very first Go application.
 // Usage is printed by running 'gopwgen h'
+// --------------------------------
+// Copyright 2013 by Salvatore LaMendola
+// Permission is granted to copy/modify
+// in any way you please as long as proper
+// credit is given. Please see LICENSE for
+// more details (GPLv3).
 
 package main
 
