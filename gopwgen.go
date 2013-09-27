@@ -46,7 +46,7 @@ func main() {
     // just read the args and populate one/both
     var length int
     var number int
-    
+
     flag.Parse()
     if flag.Arg(1) == "" && flag.Arg(2) == "" {
         length = 19
@@ -95,12 +95,12 @@ func main() {
     }
 
     // Generate alphanumeric + symbols password(s)
-    if flag.Arg(0) == "s" || flag.Arg(0) == "symbols" { 
+    if flag.Arg(0) == "s" || flag.Arg(0) == "symbols" {
         for i := 0; i < number; i++ {
             for j := 0; j < length; j++ {
                 password[j] = symbols[rand.Intn(len(symbols))]
-            }   
-            
+            }
+
             fmt.Println(string(password))
         }
     }
@@ -113,7 +113,7 @@ func main() {
         }
 
         fmt.Println(string(password))
-        
+
     }
 
     // Generate WordPress encryption secrets
