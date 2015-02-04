@@ -15,12 +15,11 @@ OPTIONS (MUST SPECIFY ONE!)
 -w                Generate WordPress encryption keys (wp-config.php)
 
 LENGTH/NUMBER (optional)
--l | length       Password length in characters [ignored for -p and -w]
--n | number       Number of passwords to generate [ignored for -p and -w]
+-l                Password length in characters [ignored for -p and -w]
+-n                Number of passwords to generate [ignored for -p and -w]
 
 If no length or number are defined (and you haven't changed the code), a default length of 19 and number of 1 will be used.
 ```
-Usage can also be shown by typing `gopwgen h` or `gopwgen help`
 
 Performance
 -----------
