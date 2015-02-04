@@ -18,10 +18,7 @@ import (
 	"os"
 )
 
-/*
- * Proper flag variable assignment and usage info
- * Thanks to Jacques Fuentes @jpfuentes2 for the code review!
- */
+// Assign all the acceptable arguments and their default values
 var (
 	flagSymbols    = flag.Bool("s", false, "Alphanumeric + symbols (NOT FOR MYSQL!)")
 	flagAlpha      = flag.Bool("a", false, "Alphanumeric only")
@@ -32,7 +29,7 @@ var (
 )
 
 // Alphanumeric values and symbols+alpha
-const alphanumeric = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+const alphanumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
 const symbols = alphanumeric + "-_!@#$%^&*/\\()_+{}|:<>?="
 
 func main() {
@@ -48,7 +45,7 @@ func main() {
 	// Generate alphanumeric password(s)
 	if *flagAlpha {
 		for i := 0; i < *flagNumber; i++ {
-			password := pwgen(*flagLength, false)
+			password := pwgen(*flagLength, alphanumeric)
 			fmt.Println(string(password))
 		}
 	}
@@ -56,27 +53,27 @@ func main() {
 	// Generate alpha/symbols password(s)
 	if *flagSymbols {
 		for i := 0; i < *flagNumber; i++ {
-			password := pwgen(*flagLength, true)
+			password := pwgen(*flagLength, symbols)
 			fmt.Println(string(password))
 		}
 	}
 
 	// Generate phpMyAdmin blowfish secret
 	if *flagPhpMyAdmin {
-		password := pwgen(64, true)
+		password := pwgen(64, symbols)
 		fmt.Println(string(password))
 	}
 
 	// Generate WordPress encryption secrets
 	if *flagWordPress {
-		password1 := pwgen(64, true)
-		password2 := pwgen(64, true)
-		password3 := pwgen(64, true)
-		password4 := pwgen(64, true)
-		password5 := pwgen(64, true)
-		password6 := pwgen(64, true)
-		password7 := pwgen(64, true)
-		password8 := pwgen(64, true)
+		password1 := pwgen(64, symbols)
+		password2 := pwgen(64, symbols)
+		password3 := pwgen(64, symbols)
+		password4 := pwgen(64, symbols)
+		password5 := pwgen(64, symbols)
+		password6 := pwgen(64, symbols)
+		password7 := pwgen(64, symbols)
+		password8 := pwgen(64, symbols)
 
 		fmt.Printf("define('AUTH_KEY',\t\t'%s');\n", password1)
 		fmt.Printf("define('SECURE_AUTH_KEY',\t'%s');\n", password2)
@@ -91,19 +88,16 @@ func main() {
 
 }
 
-func pwgen(length int, symbolsenabled bool) []byte {
+func pwgen(length int, allowedChars string) []byte {
 	// Create the password string and associated randomness
 	password := make([]byte, length)
 	entropy := make([]byte, length+(length/4))
+	allowedLength := len(allowedChars)
 
-	// Generate password(s) of the requested length/count
+	// Generate password of the requested length
 	io.ReadFull(rand.Reader, entropy)
 	for j := 0; j < length; j++ {
-		if symbolsenabled {
-			password[j] = symbols[entropy[j]%byte(len(symbols))]
-		} else {
-			password[j] = alphanumeric[entropy[j]%byte(len(alphanumeric))]
-		}
+		password[j] = allowedChars[entropy[j]%byte(allowedLength)]
 	}
 	return password
 }

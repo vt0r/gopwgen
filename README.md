@@ -25,3 +25,8 @@ Performance
 -----------
 You'll generally get the best performance by compiling this script into a binary first, which is as simple as running: `go build gopwgen.go`  
 You can then run `./gopwgen` or simply `gopwgen` if you copy the binary to `~/bin` or `/usr/bin`.
+
+
+Thanks
+------
+Special thanks goes to [Jacques Fuentes](https://github.com/jpfuentes2) and [Nikhil Narula](https://github.com/nn2242) for pointing out spots where I'd goofed or where code could be shrunk.
