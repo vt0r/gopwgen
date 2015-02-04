@@ -5,6 +5,7 @@
  * It does what it says above.
  * --------------------------------
  * Copyright (c) 2015, Salvatore LaMendola <salvatore@lamendola.me>
+ * All rights reserved.
  */
 
 package main
@@ -14,11 +15,12 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"os"
 )
 
 /*
  * Proper flag variable assignment and usage info
- * Thanks to Jacques Fuentes for the code review!
+ * Thanks to Jacques Fuentes @jpfuentes2 for the code review!
  */
 var (
 	flagSymbols    = flag.Bool("s", false, "Alphanumeric + symbols (NOT FOR MYSQL!)")
@@ -35,6 +37,13 @@ const symbols = alphanumeric + "-_!@#$%^&*/\\()_+{}|:<>?="
 
 func main() {
 	flag.Parse()
+
+	// No option specified
+	if !*flagAlpha && !*flagSymbols && !*flagPhpMyAdmin && !*flagWordPress {
+		fmt.Printf("ERROR: No option selected.\n\n")
+		flag.Usage()
+		os.Exit(1)
+	}
 
 	// Generate alphanumeric password(s)
 	if *flagAlpha {
