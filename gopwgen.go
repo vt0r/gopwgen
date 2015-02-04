@@ -2,13 +2,9 @@
  * Sal's Random Password Generator
  * --------------------------------
  * My very first Go application.
- * Usage is printed by running 'gopwgen h'
+ * It does what it says above.
  * --------------------------------
- * Copyright 2013 by Salvatore LaMendola
- * Permission is granted to copy/modify
- * in any way you please as long as proper
- * credit is given. Please see LICENSE for
- * more details (GPLv3).
+ * Copyright (c) 2015, Salvatore LaMendola <salvatore@lamendola.me>
  */
 
 package main
