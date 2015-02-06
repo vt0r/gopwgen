@@ -11,11 +11,14 @@
 package main
 
 import (
+	"bytes"
 	"crypto/rand"
 	"flag"
 	"fmt"
 	"io"
 	"os"
+	"strings"
+	"text/tabwriter"
 )
 
 // Assign all the acceptable arguments and their default values
@@ -26,6 +29,17 @@ var (
 	flagWordPress  = flag.Bool("w", false, "Generate WordPress encryption salts for use in wp-config.php")
 	flagLength     = flag.Int("l", 19, "Length of generated password(s)")
 	flagNumber     = flag.Int("n", 1, "Number of generated password(s)")
+
+	phpKeys = [...]string{
+		"AUTH_KEY",
+		"SECURE_AUTH_KEY",
+		"LOGGED_IN_KEY",
+		"NONCE_KEY",
+		"AUTH_SALT",
+		"SECURE_AUTH_SALT",
+		"LOGGED_IN_SALT",
+		"NONCE_SALT",
+	}
 )
 
 // Alphanumeric values and symbols+alpha
@@ -36,46 +50,33 @@ func main() {
 	flag.Parse()
 
 	// No option specified
-	if !*flagAlpha && !*flagSymbols && !*flagPhpMyAdmin && !*flagWordPress {
+	allowed, numPws, pwlen := symbols, *flagNumber, *flagLength
+
+	pwStringer := func(n int, s string) string { return string(pwgen(n, s)) }
+
+	switch {
+	case *flagSymbols: // Already set up this way
+	case *flagAlpha:
+		allowed = alphanumeric
+	case *flagPhpMyAdmin:
+		pwlen = 64
+	case *flagWordPress:
+		pwlen = 64
+		w := new(tabwriter.Writer)
+		var b bytes.Buffer
+		w.Init(&b, 26, 1, 0, ' ', 0)
+		pwStringer = phpKeysPwgen(w, &b)
+	default:
 		fmt.Printf("ERROR: No option selected.\n\n")
 		flag.Usage()
 		os.Exit(1)
 	}
 
-	// Generate alphanumeric password(s)
-	if *flagAlpha {
-		for i := 0; i < *flagNumber; i++ {
-			password := pwgen(*flagLength, alphanumeric)
-			fmt.Println(string(password))
-		}
+	outputs := make([]string, numPws)
+	for i := 0; i < numPws; i++ {
+		outputs[i] = pwStringer(pwlen, allowed)
 	}
-
-	// Generate alpha/symbols password(s)
-	if *flagSymbols {
-		for i := 0; i < *flagNumber; i++ {
-			password := pwgen(*flagLength, symbols)
-			fmt.Println(string(password))
-		}
-	}
-
-	// Generate phpMyAdmin blowfish secret
-	if *flagPhpMyAdmin {
-		password := pwgen(64, symbols)
-		fmt.Println(string(password))
-	}
-
-	// Generate WordPress encryption secrets
-	if *flagWordPress {
-		fmt.Printf("define('AUTH_KEY',\t\t'%s');\n", pwgen(64, symbols))
-		fmt.Printf("define('SECURE_AUTH_KEY',\t'%s');\n", pwgen(64, symbols))
-		fmt.Printf("define('LOGGED_IN_KEY',\t\t'%s');\n", pwgen(64, symbols))
-		fmt.Printf("define('NONCE_KEY',\t\t'%s');\n", pwgen(64, symbols))
-		fmt.Printf("define('AUTH_SALT',\t\t'%s');\n", pwgen(64, symbols))
-		fmt.Printf("define('SECURE_AUTH_SALT',\t'%s');\n", pwgen(64, symbols))
-		fmt.Printf("define('LOGGED_IN_SALT',\t'%s');\n", pwgen(64, symbols))
-		fmt.Printf("define('NONCE_SALT',\t\t'%s');\n", pwgen(64, symbols))
-	}
-
+	fmt.Print(strings.Join(outputs, "\n"))
 }
 
 func pwgen(length int, allowedChars string) []byte {
@@ -90,4 +91,23 @@ func pwgen(length int, allowedChars string) []byte {
 		password[j] = allowedChars[entropy[j]%byte(allowedLength)]
 	}
 	return password
+}
+
+type flushableWriter interface {
+	io.Writer
+	Flush() error
+}
+
+func phpKeysPwgen(w flushableWriter, b *bytes.Buffer) func(int, string) string {
+	return func(n int, s string) string {
+		lines := make([]string, len(phpKeys)+1)
+		for i, key := range phpKeys {
+			fmt.Fprintf(w, "define('%s',\t'%s');", key, string(pwgen(n, s)))
+			w.Flush()
+
+			lines[i] = b.String()
+			b.Reset()
+		}
+		return strings.Join(lines, "\n")
+	}
 }
