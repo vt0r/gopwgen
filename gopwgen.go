@@ -17,6 +17,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"strings"
 	"text/tabwriter"
 )
@@ -27,8 +28,6 @@ var (
 	flagAlpha      = flag.Bool("a", false, "Alphanumeric only")
 	flagPhpMyAdmin = flag.Bool("p", false, "Generate phpMyAdmin Blowfish secret (for cookie auth)")
 	flagWordPress  = flag.Bool("w", false, "Generate WordPress encryption salts for use in wp-config.php")
-	flagLength     = flag.Int("l", 19, "Length of generated password(s)")
-	flagNumber     = flag.Int("n", 1, "Number of generated password(s)")
 
 	phpKeys = [...]string{
 		"AUTH_KEY",
@@ -42,20 +41,45 @@ var (
 	}
 )
 
-// Alphanumeric values and symbols+alpha
+// Alphanumeric values and symbols+alpha / default length and number of passwords
 const alphanumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
 const symbols = alphanumeric + "-_!@#$%^&*/\\()_+{}|:<>?="
+const defaultlen = 19
+const defaultnum = 1
 
 func main() {
 	flag.Parse()
 
-	// No option specified
-	allowed, numPws, pwlen := symbols, *flagNumber, *flagLength
+	// Override the default (ugly) usage output
+	flag.Usage = func() {
+		fmt.Printf("Sal's Random Password Generator\n")
+		fmt.Printf("-------------------------------\n")
+		fmt.Printf("Usage: %s <OPTION> [length] [number] (length and number optional)\n\n", os.Args[0])
+		fmt.Printf("OPTIONS (MUST SPECIFY ONE!):\n")
+		fmt.Printf("-s               Add symbols to output (NOT FOR MYSQL!)\n")
+		fmt.Printf("-a               Alphanumeric only\n")
+		fmt.Printf("-p               Generate phpMyAdmin Blowfish secret (for cookie auth)\n")
+		fmt.Printf("-w               Generate Wordpress encryption keys (wp-config.php)\n")
+		fmt.Printf("-h               Display this usage information\n\n")
+		fmt.Printf("If no length or number are defined, a default length of %d and number of %d will be used.\n\n", defaultlen, defaultnum)
+	}
+
+	// Either set len/num using provided values or fallback to defaults
+	allowed := symbols
+	pwlen, err1 := strconv.Atoi(flag.Arg(0))
+	if err1 != nil {
+		pwlen = defaultlen
+	}
+	numPws, err2 := strconv.Atoi(flag.Arg(1))
+	if err2 != nil {
+		numPws = defaultnum
+	}
 
 	pwStringer := func(n int, s string) string { return string(pwgen(n, s)) }
 
+	// Option validation
 	switch {
-	case *flagSymbols: // Already set up this way
+	case *flagSymbols: // This is the default assigned value
 	case *flagAlpha:
 		allowed = alphanumeric
 	case *flagPhpMyAdmin:
@@ -67,7 +91,7 @@ func main() {
 		w.Init(&b, 26, 1, 0, ' ', 0)
 		pwStringer = phpKeysPwgen(w, &b)
 	default:
-		fmt.Printf("ERROR: No option selected.\n\n")
+		fmt.Printf("ERROR: At least one option must be selected.\n\n")
 		flag.Usage()
 		os.Exit(1)
 	}
