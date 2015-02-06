@@ -91,7 +91,7 @@ func main() {
 		w.Init(&b, 26, 1, 0, ' ', 0)
 		pwStringer = phpKeysPwgen(w, &b)
 	default:
-		fmt.Printf("ERROR: At least one option must be selected.\n\n")
+		fmt.Printf("ERROR: An option must be selected.\n\n")
 		flag.Usage()
 		os.Exit(1)
 	}
