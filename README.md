@@ -15,7 +15,8 @@ OPTIONS (MUST SPECIFY ONE!)
 -w               Generate WordPress encryption keys (wp-config.php)
 -h               Display this usage information
 
-If no length or number are defined (and you haven't changed the code), a default length of 19 and number of 1 will be used.
+If no length or number are defined (and you haven't changed the code),
+a default length of 19 and number of 1 will be used.
 ```
 
 Performance
@@ -26,4 +27,10 @@ You can then run `./gopwgen` or simply `gopwgen` if you copy the binary to `~/bi
 
 Thanks
 ------
-Special thanks goes to [Jacques Fuentes](https://github.com/jpfuentes2) and [Nikhil Narula](https://github.com/nn2242) for pointing out spots where I'd goofed or where code could be shrunk.
+Special thanks goes to:  
+  
+[Jacques Fuentes](https://github.com/jpfuentes2)  
+[Nikhil Narula](https://github.com/nn2242)  
+[Bodie Solomon](https://github.com/binary132)  
+  
+for pointing out spots where I'd goofed or where code could be shrunk/improved.
