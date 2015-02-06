@@ -6,17 +6,14 @@ A simple password generator written in Go
 Usage
 -----
 ```
-Usage: gopwgen <OPTION> <-l length> <-n number> (length and number optional)
+Usage: gopwgen <OPTION> [length] [number] (length and number optional)
 
 OPTIONS (MUST SPECIFY ONE!)
--s                Alphanumeric + symbols (NOT FOR MYSQL!)
--a                Alphanumeric only
--p                Generate phpMyAdmin Blowfish secret (for cookie auth)
--w                Generate WordPress encryption keys (wp-config.php)
-
-LENGTH/NUMBER (optional)
--l                Password length in characters [ignored for -p and -w]
--n                Number of passwords to generate [ignored for -p and -w]
+-s               Alphanumeric + symbols (NOT FOR MYSQL!)
+-a               Alphanumeric only
+-p               Generate phpMyAdmin Blowfish secret (for cookie auth)
+-w               Generate WordPress encryption keys (wp-config.php)
+-h               Display this usage information
 
 If no length or number are defined (and you haven't changed the code), a default length of 19 and number of 1 will be used.
 ```
