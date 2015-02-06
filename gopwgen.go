@@ -66,24 +66,14 @@ func main() {
 
 	// Generate WordPress encryption secrets
 	if *flagWordPress {
-		password1 := pwgen(64, symbols)
-		password2 := pwgen(64, symbols)
-		password3 := pwgen(64, symbols)
-		password4 := pwgen(64, symbols)
-		password5 := pwgen(64, symbols)
-		password6 := pwgen(64, symbols)
-		password7 := pwgen(64, symbols)
-		password8 := pwgen(64, symbols)
-
-		fmt.Printf("define('AUTH_KEY',\t\t'%s');\n", password1)
-		fmt.Printf("define('SECURE_AUTH_KEY',\t'%s');\n", password2)
-		fmt.Printf("define('LOGGED_IN_KEY',\t\t'%s');\n", password3)
-		fmt.Printf("define('NONCE_KEY',\t\t'%s');\n", password4)
-		fmt.Printf("define('AUTH_SALT',\t\t'%s');\n", password5)
-		fmt.Printf("define('SECURE_AUTH_SALT',\t'%s');\n", password6)
-		fmt.Printf("define('LOGGED_IN_SALT',\t'%s');\n", password7)
-		fmt.Printf("define('NONCE_SALT',\t\t'%s');\n", password8)
-
+		fmt.Printf("define('AUTH_KEY',\t\t'%s');\n", pwgen(64, symbols))
+		fmt.Printf("define('SECURE_AUTH_KEY',\t'%s');\n", pwgen(64, symbols))
+		fmt.Printf("define('LOGGED_IN_KEY',\t\t'%s');\n", pwgen(64, symbols))
+		fmt.Printf("define('NONCE_KEY',\t\t'%s');\n", pwgen(64, symbols))
+		fmt.Printf("define('AUTH_SALT',\t\t'%s');\n", pwgen(64, symbols))
+		fmt.Printf("define('SECURE_AUTH_SALT',\t'%s');\n", pwgen(64, symbols))
+		fmt.Printf("define('LOGGED_IN_SALT',\t'%s');\n", pwgen(64, symbols))
+		fmt.Printf("define('NONCE_SALT',\t\t'%s');\n", pwgen(64, symbols))
 	}
 
 }
