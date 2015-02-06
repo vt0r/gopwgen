@@ -45,23 +45,20 @@ func main() {
 	// Generate alphanumeric password(s)
 	if *flagAlpha {
 		for i := 0; i < *flagNumber; i++ {
-			password := pwgen(*flagLength, alphanumeric)
-			fmt.Println(string(password))
+			fmt.Println(string(pwgen(*flagLength, alphanumeric)))
 		}
 	}
 
 	// Generate alpha/symbols password(s)
 	if *flagSymbols {
 		for i := 0; i < *flagNumber; i++ {
-			password := pwgen(*flagLength, symbols)
-			fmt.Println(string(password))
+			fmt.Println(string(pwgen(*flagLength, symbols)))
 		}
 	}
 
 	// Generate phpMyAdmin blowfish secret
 	if *flagPhpMyAdmin {
-		password := pwgen(64, symbols)
-		fmt.Println(string(password))
+		fmt.Println(string(pwgen(64, symbols)))
 	}
 
 	// Generate WordPress encryption secrets
