@@ -47,22 +47,14 @@ const symbols = alphanumeric + "-_!@#$%^&*/\\()_+{}|:<>?="
 const defaultlen = 19
 const defaultnum = 1
 
-func main() {
-	flag.Parse()
+func myUsage() {
+	fmt.Printf("Usage: %s [OPTION] [length] [number]\n\nOptions:\n", os.Args[0])
+	flag.PrintDefaults()
+}
 
-	// Override the default (ugly) usage output
-	flag.Usage = func() {
-		fmt.Printf("Sal's Random Password Generator\n")
-		fmt.Printf("-------------------------------\n")
-		fmt.Printf("Usage: %s <OPTION> [length] [number] (length and number optional)\n\n", os.Args[0])
-		fmt.Printf("OPTIONS (MUST SPECIFY ONE!):\n")
-		fmt.Printf("-s               Add symbols to output (NOT FOR MYSQL!)\n")
-		fmt.Printf("-a               Alphanumeric only\n")
-		fmt.Printf("-p               Generate phpMyAdmin Blowfish secret (for cookie auth)\n")
-		fmt.Printf("-w               Generate Wordpress encryption keys (wp-config.php)\n")
-		fmt.Printf("-h               Display this usage information\n\n")
-		fmt.Printf("If no length or number are defined, a default length of %d and number of %d will be used.\n\n", defaultlen, defaultnum)
-	}
+func main() {
+	flag.Usage = myUsage
+	flag.Parse()
 
 	// Either set len/num using provided values or fallback to defaults
 	allowed := symbols
@@ -90,10 +82,6 @@ func main() {
 		var b bytes.Buffer
 		w.Init(&b, 26, 1, 0, ' ', 0)
 		pwStringer = phpKeysPwgen(w, &b)
-	default:
-		fmt.Printf("ERROR: An option must be selected.\n\n")
-		flag.Usage()
-		os.Exit(1)
 	}
 
 	outputs := make([]string, numPws)
