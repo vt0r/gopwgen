@@ -12,14 +12,16 @@ package main
 
 import (
 	"bytes"
-	"crypto/rand"
 	"flag"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"strconv"
 	"strings"
 	"text/tabwriter"
+
+	"github.com/vt0r/gopwgen/pwgen"
 )
 
 // Assign all the acceptable arguments and their default values
@@ -39,13 +41,10 @@ var (
 		"LOGGED_IN_SALT",
 		"NONCE_SALT",
 	}
-)
 
-// Alphanumeric values and symbols+alpha / default length and number of passwords
-const alphanumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
-const symbols = alphanumeric + "-_!@#$%^&*/\\()_+{}|:<>?="
-const defaultlen = 19
-const defaultnum = 1
+	defaultLen = 19
+	defaultNum = 1
+)
 
 func myUsage() {
 	fmt.Printf("Usage: %s [OPTION] [length] [number]\n\nOptions:\n", os.Args[0])
@@ -57,23 +56,29 @@ func main() {
 	flag.Parse()
 
 	// Either set len/num using provided values or fallback to defaults
-	allowed := symbols
+	allowed := pwgen.Symbols
 	pwlen, err1 := strconv.Atoi(flag.Arg(0))
 	if err1 != nil {
-		pwlen = defaultlen
+		pwlen = defaultLen
 	}
 	numPws, err2 := strconv.Atoi(flag.Arg(1))
 	if err2 != nil {
-		numPws = defaultnum
+		numPws = defaultNum
 	}
 
-	pwStringer := func(n int, s string) string { return string(pwgen(n, s)) }
+	pwStringer := func(n int, c pwgen.CharSet) (string, error) {
+		s, err := pwgen.Pwgen(n, c)
+		if err != nil {
+			return "", err
+		}
+		return string(s), nil
+	}
 
 	// Option validation
 	switch {
 	case *flagSymbols: // This is the default assigned value
 	case *flagAlpha:
-		allowed = alphanumeric
+		allowed = pwgen.AlphaNumeric
 	case *flagPhpMyAdmin:
 		pwlen = 64
 	case *flagWordPress:
@@ -85,24 +90,21 @@ func main() {
 	}
 
 	outputs := make([]string, numPws)
+
+	var (
+		pw  string
+		err error
+	)
+
 	for i := 0; i < numPws; i++ {
-		outputs[i] = pwStringer(pwlen, allowed)
+		pw, err = pwStringer(pwlen, allowed)
+		if err != nil {
+			log.Fatalf("error while generating password %d: %v", i, err)
+			outputs[i] = pw
+		}
 	}
+
 	fmt.Print(strings.Join(outputs, "\n"))
-}
-
-func pwgen(length int, allowedChars string) []byte {
-	// Create the password string and associated randomness
-	password := make([]byte, length)
-	entropy := make([]byte, length+(length/4))
-	allowedLength := len(allowedChars)
-
-	// Generate password of the requested length
-	io.ReadFull(rand.Reader, entropy)
-	for j := 0; j < length; j++ {
-		password[j] = allowedChars[entropy[j]%byte(allowedLength)]
-	}
-	return password
 }
 
 type flushableWriter interface {
@@ -110,16 +112,27 @@ type flushableWriter interface {
 	Flush() error
 }
 
-func phpKeysPwgen(w flushableWriter, b *bytes.Buffer) func(int, string) string {
-	return func(n int, s string) string {
-		lines := make([]string, len(phpKeys)+1)
+func phpKeysPwgen(w flushableWriter, b *bytes.Buffer) func(int, pwgen.CharSet) (string, error) {
+	return func(n int, c pwgen.CharSet) (string, error) {
+		var (
+			pw  []byte
+			err error
+
+			lines = make([]string, len(phpKeys)+1)
+		)
+
 		for i, key := range phpKeys {
-			fmt.Fprintf(w, "define('%s',\t'%s');", key, string(pwgen(n, s)))
+			pw, err = pwgen.Pwgen(n, c)
+			if err != nil {
+				return "", err
+			}
+
+			fmt.Fprintf(w, "define('%s',\t'%s');", key, pw)
 			w.Flush()
 
 			lines[i] = b.String()
 			b.Reset()
 		}
-		return strings.Join(lines, "\n")
+		return strings.Join(lines, "\n"), nil
 	}
 }
