@@ -11,6 +11,7 @@ Usage: gopwgen <OPTION> [length] [number] (length and number optional)
 OPTIONS (MUST SPECIFY ONE!)
 -s               Alphanumeric + symbols (NOT FOR MYSQL!)
 -a               Alphanumeric only
+-H               Hexadecimal only (abcdef0123456789)
 -p               Generate phpMyAdmin Blowfish secret (for cookie auth)
 -w               Generate WordPress encryption keys (wp-config.php)
 -h               Display this usage information

@@ -24,10 +24,11 @@ import (
 
 // Assign all the acceptable arguments and their default values
 var (
-	flagSymbols    = flag.Bool("s", false, "Alphanumeric + symbols (NOT FOR MYSQL!)")
-	flagAlpha      = flag.Bool("a", false, "Alphanumeric only")
-	flagPhpMyAdmin = flag.Bool("p", false, "Generate phpMyAdmin Blowfish secret (for cookie auth)")
-	flagWordPress  = flag.Bool("w", false, "Generate WordPress encryption salts for use in wp-config.php")
+	flagSymbols     = flag.Bool("s", false, "Alphanumeric + symbols (NOT FOR MYSQL!)")
+	flagAlpha       = flag.Bool("a", false, "Alphanumeric only")
+	flagHexadecimal = flag.Bool("H", false, "Hexadecimal only (abcdef0123456789)")
+	flagPhpMyAdmin  = flag.Bool("p", false, "Generate phpMyAdmin Blowfish secret (for cookie auth)")
+	flagWordPress   = flag.Bool("w", false, "Generate WordPress encryption salts for use in wp-config.php")
 
 	phpKeys = [...]string{
 		"AUTH_KEY",
@@ -44,6 +45,7 @@ var (
 // Alphanumeric values and symbols+alpha / default length and number of passwords
 const alphanumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
 const symbols = alphanumeric + "-_!@#$%^&*/\\()_+{}|:<>?="
+const hexadecimal = "abcdef0123456789"
 const defaultlen = 19
 const defaultnum = 1
 
@@ -74,6 +76,8 @@ func main() {
 	case *flagSymbols: // This is the default assigned value
 	case *flagAlpha:
 		allowed = alphanumeric
+	case *flagHexadecimal:
+		allowed = hexadecimal
 	case *flagPhpMyAdmin:
 		pwlen = 64
 	case *flagWordPress:
