@@ -92,7 +92,7 @@ func main() {
 	for i := 0; i < numPws; i++ {
 		outputs[i] = pwStringer(pwlen, allowed)
 	}
-	fmt.Print(strings.Join(outputs, "\n"))
+	fmt.Println(strings.Join(outputs, "\n"))
 }
 
 func pwgen(length int, allowedChars string) []byte {
