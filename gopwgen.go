@@ -102,7 +102,10 @@ func pwgen(length int, allowedChars string) []byte {
 	allowedLength := len(allowedChars)
 
 	// Generate password of the requested length
-	io.ReadFull(rand.Reader, entropy)
+	_, err := io.ReadFull(rand.Reader, entropy)
+	if err != nil {
+		fmt.Println("Error: ", err)
+	}
 	for j := 0; j < length; j++ {
 		password[j] = allowedChars[entropy[j]%byte(allowedLength)]
 	}
