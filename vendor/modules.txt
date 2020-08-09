@@ -1,0 +1,3 @@
+# github.com/sethvargo/go-diceware v0.2.0
+## explicit
+github.com/sethvargo/go-diceware/diceware
