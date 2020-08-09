@@ -4,7 +4,7 @@
  * My very first Go application.
  * It does what it says above.
  * --------------------------------
- * Copyright (c) 2015, Salvatore LaMendola <salvatore@lamendola.me>
+ * Copyright (c) 2015-2020, Salvatore LaMendola <salvatore@lamendola.me>
  * All rights reserved.
  */
 
@@ -16,19 +16,24 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"strconv"
 	"strings"
 	"text/tabwriter"
+
+	"github.com/sethvargo/go-diceware/diceware"
 )
 
 // Assign all the acceptable arguments and their default values
 var (
 	flagSymbols     = flag.Bool("s", false, "Alphanumeric + symbols (NOT FOR MYSQL!)")
 	flagAlpha       = flag.Bool("a", false, "Alphanumeric only")
+	flagDiceware    = flag.Bool("d", false, "Diceware passphrase (Choose random words from a list)")
 	flagHexadecimal = flag.Bool("H", false, "Hexadecimal only (abcdef0123456789)")
 	flagPhpMyAdmin  = flag.Bool("p", false, "Generate phpMyAdmin Blowfish secret (for cookie auth)")
 	flagWordPress   = flag.Bool("w", false, "Generate WordPress encryption salts for use in wp-config.php")
+	flagVersion     = flag.Bool("v", false, "Print the version number and exit")
 
 	phpKeys = [...]string{
 		"AUTH_KEY",
@@ -48,10 +53,26 @@ const symbols = alphanumeric + "-_!@#$%^&*/\\()_+{}|:<>?="
 const hexadecimal = "abcdef0123456789"
 const defaultlen = 19
 const defaultnum = 1
+const defaultDwLen = 6
+const version = "2.0.0"
 
 func myUsage() {
-	fmt.Printf("Usage: %s [OPTION] [length] [number]\n\nOptions:\n", os.Args[0])
+	fmt.Printf("Usage: %s [OPTION] [length | num dice words] [num pwds]\n\nOptions:\n", os.Args[0])
 	flag.PrintDefaults()
+}
+
+func myVersion() {
+	fmt.Printf("GoPwgen version %s\n", version)
+	os.Exit(0)
+}
+
+func diceWareGen(dwlen int) {
+	list, err := diceware.Generate(dwlen)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("%s\n", strings.Join(list, "-"))
+	os.Exit(0)
 }
 
 func main() {
@@ -61,8 +82,10 @@ func main() {
 	// Either set len/num using provided values or fallback to defaults
 	allowed := symbols
 	pwlen, err1 := strconv.Atoi(flag.Arg(0))
+	dwlen := pwlen
 	if err1 != nil {
 		pwlen = defaultlen
+		dwlen = defaultDwLen
 	}
 	numPws, err2 := strconv.Atoi(flag.Arg(1))
 	if err2 != nil {
@@ -73,9 +96,13 @@ func main() {
 
 	// Option validation
 	switch {
+	case *flagVersion:
+		myVersion()
 	case *flagSymbols: // This is the default assigned value
 	case *flagAlpha:
 		allowed = alphanumeric
+	case *flagDiceware:
+		diceWareGen(dwlen)
 	case *flagHexadecimal:
 		allowed = hexadecimal
 	case *flagPhpMyAdmin:
