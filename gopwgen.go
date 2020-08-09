@@ -54,7 +54,7 @@ const hexadecimal = "abcdef0123456789"
 const defaultlen = 19
 const defaultnum = 1
 const defaultDwLen = 6
-const version = "2.1.0"
+const version = "2.2.0"
 
 func myUsage() {
 	fmt.Printf("Usage: %s [OPTION] [length | num dice words] [num pwds/phrases]\n\nOptions:\n", os.Args[0])
