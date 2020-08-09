@@ -1,5 +1,5 @@
 /*
- * Sal's Random Password Generator
+ * Sal's Random Password Generator (GoPwgen)
  * --------------------------------
  * My very first Go application.
  * It does what it says above.
@@ -54,16 +54,15 @@ const hexadecimal = "abcdef0123456789"
 const defaultlen = 19
 const defaultnum = 1
 const defaultDwLen = 6
-const version = "2.0.0"
+const version = "2.1.0"
 
 func myUsage() {
-	fmt.Printf("Usage: %s [OPTION] [length | num dice words] [num pwds]\n\nOptions:\n", os.Args[0])
+	fmt.Printf("Usage: %s [OPTION] [length | num dice words] [num pwds/phrases]\n\nOptions:\n", os.Args[0])
 	flag.PrintDefaults()
 }
 
 func myVersion() {
 	fmt.Printf("GoPwgen version %s\n", version)
-	os.Exit(0)
 }
 
 func diceWareGen(dwlen int) {
@@ -72,7 +71,6 @@ func diceWareGen(dwlen int) {
 		log.Fatal(err)
 	}
 	fmt.Printf("%s\n", strings.Join(list, "-"))
-	os.Exit(0)
 }
 
 func main() {
@@ -98,11 +96,15 @@ func main() {
 	switch {
 	case *flagVersion:
 		myVersion()
+		os.Exit(0)
 	case *flagSymbols: // This is the default assigned value
 	case *flagAlpha:
 		allowed = alphanumeric
 	case *flagDiceware:
-		diceWareGen(dwlen)
+		for i := 0; i < numPws; i++ {
+			diceWareGen(dwlen)
+		}
+		os.Exit(0)
 	case *flagHexadecimal:
 		allowed = hexadecimal
 	case *flagPhpMyAdmin:

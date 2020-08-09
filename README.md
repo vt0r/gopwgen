@@ -5,7 +5,7 @@ A simple password generator written in Go
 ## Usage
 
 ``` txt
-Usage: gopwgen [OPTION] [length | num dice words] [num pwds]
+Usage: gopwgen [OPTION] [length | num dice words] [num pwds/phrases]
 
 Options:
   -H    Hexadecimal only (abcdef0123456789)
