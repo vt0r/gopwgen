@@ -4,7 +4,7 @@
  * My very first Go application.
  * It does what it says above.
  * --------------------------------
- * Copyright (c) 2015-2020, Salvatore LaMendola <salvatore@lamendola.me>
+ * Copyright (c) 2015-2024, Salvatore LaMendola <salvatore@lamendo.la>
  * All rights reserved.
  */
 

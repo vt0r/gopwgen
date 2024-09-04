@@ -1,5 +1,5 @@
 module github.com/vt0r/gopwgen
 
-go 1.14
+go 1.23
 
-require github.com/sethvargo/go-diceware v0.2.0
+require github.com/sethvargo/go-diceware v0.4.0
